@@ -211,36 +211,48 @@ Then you must:
 But **only** when you *want* a new BSP.
 
 
-Expected:
-
-uname -r still shows 5.15.148-tegra
-
-/lib/modules/5.15.148-tegra/build exists and contains a Makefile
-If that’s true, proceed.
-
-mkdir -p ~/scripts
-wget https://linux.brostrend.com/install -O ~/scripts/brostrend-install.sh
-cat ~/scripts/brostrend-install.sh
-Run them with sudo:
-
-#  - Install:
-sudo /home/ubuntu/rtl8852bu-install
-
-# Run from the source directory:
-
-ls -lh /lib/modules/$(uname -r)/extra/rtl8852bu/8852bu.ko
-lsmod | grep -i 8852
-sudo dmesg | tail -n 50
-nmcli dev status
 
 
-#  - Uninstall if broken:
+## 📡 BrosTrend Wi-Fi adapters (rtl8852bu) on Vendor BSP kernels
 
-sudo /home/ubuntu/rtl8852bu-uninstall
-# Then :
 
-sudo reboot
+```bash
+sudo apt-get install -y \
+  nvidia-l4t-kernel-headers=5.15.148-tegra-36.4.0-20240912212859 \
+  nvidia-l4t-kernel-oot-headers=5.15.148-tegra-36.4.0-20240912212859
+```
+
+```bash
+sudo apt-mark hold \
+  nvidia-l4t-kernel-headers \
+  nvidia-l4t-kernel-oot-headers
+```
+
+Without this, the BrosTrend DKMS installer is **operating on a mismatched ABI**, even if it appears to “work”.
+
+--
+#### Option A — BrosTrend installer script (what actually happened)
+
+```bash
+wget https://linux.brostrend.com/install
+chmod +x install
+sudo ./install
+```
+
+This:
+
+* Detects the adapter via `lsusb`
+* Selects `rtl8852bu`
+* Installs build dependencies
+* Installs `rtl8852bu-dkms`
+* Builds module for **current kernel only**
+
+Result:
+
+```bash
 lsmod | grep 8852
+→ 8852bu loaded
+
 nmcli dev status
-
-
+→ Wi-Fi device present
+```
