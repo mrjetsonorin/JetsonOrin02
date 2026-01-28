@@ -46,6 +46,20 @@ sudo apt autoclean
 sudo reboot
 ```
 
+```bash
+sudo apt install -y python3-pip python3-venv python3-dev
+python3 -m pip install --upgrade pip
+python3 --version
+```
+
+```bash
+#sudo apt update
+sudo pip install jetson-stats # or sudo pip install -U jetson-stats  ?
+sudo reboot
+jtop
+```
+
+
 Install firefox:
 ```bash
 sudo snap remove firefox 2>/dev/null || true && \
@@ -60,12 +74,7 @@ sudo apt install -y firefox && \
 which firefox && firefox --version
 ```
 
-```bash
-sudo apt install -y python3-pip python3-venv python3-dev
-python3 -m pip install --upgrade pip
-python3 --version
-sudo reboot
-```
+
 
 
 
