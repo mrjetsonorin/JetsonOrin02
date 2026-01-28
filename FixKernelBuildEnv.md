@@ -1,3 +1,14 @@
+Ask for the following:
+
+Full kernel source tree matching 5.15.148-tegra
+
+Their BSP package containing kernel-jammy-src
+
+Official OOT module build instructions for this image
+
+
+
+
 The kernel build and source symlinks under /lib/modules/5.15.148-tegra/ were originally pointing to a non-existent host-side BSP path, indicating that the kernel was built off-target. I corrected these symlinks to point to the locally installed NVIDIA kernel headers so that standard tooling can resolve build and source paths without failure.
 
 After correction, the system is stable and running correctly; however, only header-only kernel trees are present on the target. The full kernel source tree (including the tools/ directory required for modules_prepare and full out-of-tree workflows) is not available on the device. As a result, full kernel preparation or rebuilds cannot be performed safely on-target, and kernel development remains dependent on the original Advantech BSP build environment. The attached JSON report documents the current state in a machine-readable form.
