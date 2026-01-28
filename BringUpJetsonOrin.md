@@ -1,7 +1,5 @@
 ```bash
-sudo apt update && sudo apt install -y build-essential curl git vim nano wget gh tree tmux htop snapd
-git --version
-gh --version
+sudo apt update && sudo apt install -y build-essential curl vim nano wget tree tmux htop snapd
 sudo apt upgrade
 sudo systemctl enable --now snapd
 sudo systemctl enable --now snapd.socket
@@ -51,7 +49,7 @@ sudo reboot
 ```
 
 ```bash
-sudo apt install -y python3-pip python3-venv python3-dev
+sudo apt install -y python3-pip python3-venv python3-dev pip
 python3 -m pip install --upgrade pip
 python3 --version
 ```
@@ -102,7 +100,25 @@ tailscale status
 tailscale ip -4
 ```
 
-
+```bash
+git config --global user.name "mrjetsonorin"
+git config --global user.email "mrjorin00@email.com"
+git config --global init.defaultBranch main
+git config --global pull.rebase false
+git config --global pull.ff only           # forbid accidental merge commits
+git config --global fetch.prune true       # auto-prune deleted remote branches
+git config --global rebase.autoStash true  # stash local changes during rebase
+git config --global core.autocrlf input    # safer line endings for Windows + WSL
+git config --global rerere.enabled true    # remembers conflict resolutions
+git config --global -l
+```
+```bash
+type -p curl >/dev/null || sudo apt-get update && sudo apt-get install -y curl
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt update && sudo apt install -y gh
+```
 
 
 
