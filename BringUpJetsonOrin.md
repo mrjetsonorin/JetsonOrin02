@@ -1,8 +1,10 @@
 ```bash
-sudo apt update && sudo apt install -y build-essential curl git vim nano wget gh tree tmux htop
+sudo apt update && sudo apt install -y build-essential curl git vim nano wget gh tree tmux htop snapd
 git --version
 gh --version
 sudo apt upgrade
+sudo systemctl enable --now snapd
+sudo systemctl enable --now snapd.socket
 ```
 
 
@@ -23,6 +25,8 @@ cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq  # see min freq
 cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq  # see max freq
 sudo cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq  # see current
 ```
+
+
 LOCK:
 ```bash
 # View held packages
@@ -73,6 +77,31 @@ EOF
 sudo apt install -y firefox && \
 which firefox && firefox --version
 ```
+
+
+Install and configure SSH
+
+```bash
+sudo apt install -y openssh-server
+sudo systemctl enable --now ssh
+systemctl status ssh
+```
+
+```bash
+curl -fsSL https://tailscale.com/install.sh | sh
+```
+
+```bash
+sudo tailscale up
+```
+
+Verify status and IP:
+
+```bash
+tailscale status
+tailscale ip -4
+```
+
 
 
 
