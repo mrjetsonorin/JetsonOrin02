@@ -209,3 +209,38 @@ Then you must:
 4. Rebuild OOT modules
 
 But **only** when you *want* a new BSP.
+
+
+Expected:
+
+uname -r still shows 5.15.148-tegra
+
+/lib/modules/5.15.148-tegra/build exists and contains a Makefile
+If that’s true, proceed.
+
+mkdir -p ~/scripts
+wget https://linux.brostrend.com/install -O ~/scripts/brostrend-install.sh
+cat ~/scripts/brostrend-install.sh
+Run them with sudo:
+
+#  - Install:
+sudo /home/ubuntu/rtl8852bu-install
+
+# Run from the source directory:
+
+ls -lh /lib/modules/$(uname -r)/extra/rtl8852bu/8852bu.ko
+lsmod | grep -i 8852
+sudo dmesg | tail -n 50
+nmcli dev status
+
+
+#  - Uninstall if broken:
+
+sudo /home/ubuntu/rtl8852bu-uninstall
+# Then :
+
+sudo reboot
+lsmod | grep 8852
+nmcli dev status
+
+
