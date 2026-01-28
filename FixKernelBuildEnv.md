@@ -1,3 +1,13 @@
+The kernel build and source symlinks under /lib/modules/5.15.148-tegra/ were originally pointing to a non-existent host-side BSP path, indicating that the kernel was built off-target. I corrected these symlinks to point to the locally installed NVIDIA kernel headers so that standard tooling can resolve build and source paths without failure.
+
+After correction, the system is stable and running correctly; however, only header-only kernel trees are present on the target. The full kernel source tree (including the tools/ directory required for modules_prepare and full out-of-tree workflows) is not available on the device. As a result, full kernel preparation or rebuilds cannot be performed safely on-target, and kernel development remains dependent on the original Advantech BSP build environment. The attached JSON report documents the current state in a machine-readable form.
+
+
+
+
+
+
+
 Generate corrected JSON report:
 
 
@@ -98,88 +108,6 @@ done
 ls -l "$MODDIR"/{build,source}
 ```
 
-EXPLANATION:
-
----
-
-### ✅ 1. Created a backup location
-
-```bash
-KVER=5.15.148-tegra
-MODDIR=/lib/modules/$KVER
-BACKUP=$MODDIR/backup-links
-HEADERS=/usr/src/linux-headers-5.15.148-tegra-ubuntu22.04_aarch64/3rdparty/canonical/linux-jammy/kernel-source
-
-sudo mkdir -p "$BACKUP"
-```
-
-**Why:**
-
-* Preserves vendor state
-* Allows rollback if NVIDIA tools expect those links
-* Good practice on embedded systems
-
----
-
-### ✅ 2. Backed up *real paths* (not symlinks)
-
-You guarded against two cases:
-
-* link
-* directory
-* file
-
-```bash
-if [ -e "$MODDIR/build" ] && [ ! -L "$MODDIR/build" ]; then
-    sudo mv "$MODDIR/build" "$BACKUP/build"
-fi
-
-if [ -e "$MODDIR/source" ] && [ ! -L "$MODDIR/source" ]; then
-    sudo mv "$MODDIR/source" "$BACKUP/source"
-fi
-```
-
-**Why:**
-
-* If a BSP accidentally created a real directory, you wouldn’t destroy it
-* Prevents irreversible damage
-
----
-
-### ✅ 3. Removed broken symlinks (only after backup)
-
-```bash
-sudo rm -f "$MODDIR/build" "$MODDIR/source"
-```
-
-**Why:**
-
-* Guarantees clean state
-* Avoids `ln -s` failing silently
-
----
-
-### ✅ 4. Recreated symlinks to the *correct* header tree
-
-```bash
-sudo ln -s "$HEADERS" "$MODDIR/build"
-sudo ln -s "$HEADERS" "$MODDIR/source"
-```
-
-**Why:**
-
-* Points at the **actual kernel build root**
-* Not the host BSP
-* Not the generic headers root
-
----
-
-### ✅ 5. Verified explicitly
-
-```bash
-ls -l /lib/modules/5.15.148-tegra/{build,source}
-```
-
 Expected:
 
 ```text
@@ -189,15 +117,76 @@ source -> .../kernel-source
 
 ---
 
-### ✅ 6. Cleaned up *only after confirmation*
+### ✅ Clean up *only after confirmation*
 
 ```bash
 sudo rm -rf /lib/modules/5.15.148-tegra/backup-links
 ```
 
-**Why:**
 
-* Ensures rollback window until build success
-* Matches production embedded workflow
 
----
+
+NOW FULL REPORT:
+
+```bash
+cat > jetson_kernel_build_env_report.json <<EOF
+{
+  "report_type": "jetson_kernel_build_environment",
+  "generated_at": "$(date -Is)",
+  "hostname": "$(hostname)",
+
+  "system": {
+    "architecture": "$(uname -m)",
+    "kernel_release": "$(uname -r)",
+    "kernel_full": "$(uname -a)"
+  },
+
+  "nvidia_l4t": {
+    "release_file": "$(head -n 1 /etc/nv_tegra_release 2>/dev/null || echo not_present)",
+    "installed_packages": [
+$(dpkg -l | awk '/nvidia-l4t-kernel/ {printf "      \"%s %s\",\n", $2, $3}')
+      "sentinel_end"
+    ]
+  },
+
+  "kernel_modules": {
+    "modules_directory": "/lib/modules/$(uname -r)",
+    "build_symlink": {
+      "path": "/lib/modules/$(uname -r)/build",
+      "resolved_target": "$(readlink -f /lib/modules/$(uname -r)/build 2>/dev/null || echo BROKEN)"
+    },
+    "source_symlink": {
+      "path": "/lib/modules/$(uname -r)/source",
+      "resolved_target": "$(readlink -f /lib/modules/$(uname -r)/source 2>/dev/null || echo BROKEN)"
+    }
+  },
+
+  "headers": {
+    "headers_installed": "$(test -d /usr/src/linux-headers-$(uname -r)-ubuntu22.04_aarch64 && echo true || echo false)",
+    "headers_path": "/usr/src/linux-headers-$(uname -r)-ubuntu22.04_aarch64",
+    "contains_full_kernel_source": false
+  },
+
+  "kernel_source": {
+    "full_kernel_source_found_on_target": false,
+    "expected_source_origin": "Advantech BSP host build environment",
+    "reason": "Kernel was built off-target; only headers were shipped"
+  },
+
+  "status_summary": {
+    "symlinks_corrected": true,
+    "runtime_kernel_state": "healthy",
+    "oot_module_build_on_target": "partially_supported",
+    "full_kernel_rebuild_on_target": "not_supported"
+  },
+
+  "vendor_recommendations": [
+    "Provide full kernel source tree matching running kernel",
+    "Or provide official BSP-based OOT module build workflow",
+    "Avoid shipping broken build/source symlinks in images"
+  ]
+}
+EOF
+```
+
+
