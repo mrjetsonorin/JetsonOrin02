@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "generated": "2026-01-28T15:14:07+01:00",
+    "hostname": "aecq011296",
+    "platform": "NVIDIA Jetson Orin"
+  },
+
+  "system": {
+    "kernel_release": "5.15.148-tegra",
+    "kernel_full": "Linux aecq011296 5.15.148-tegra #1 SMP PREEMPT Tue Sep 23 13:57:53 CST 2025 aarch64 aarch64 aarch64 GNU/Linux",
+    "architecture": "aarch64",
+    "l4t_release": "# R36 (release), REVISION: 4.0, GCID: 37537400, BOARD: generic, EABI: aarch64, DATE: Fri Sep 13 04:36:44 UTC 2024"
+  },
+
+  "kernel_headers": {
+    "installed": "true",
+    "path": "/usr/src/linux-headers-5.15.148-tegra-ubuntu22.04_aarch64"
+  },
+
+  "symlinks": {
+    "build": {
+      "path": "/lib/modules/5.15.148-tegra/build",
+      "ls": "lrwxrwxrwx 1 root root 109 Sep 23 08:07 /lib/modules/5.15.148-tegra/build -> /home/adv/BSP/risc_nvidia_jetson_36.4_agx-orin+orin-nx_6_2025-09-23/kernel/kernel_out/kernel/kernel-jammy-src",
+      "resolved": "BROKEN"
+    },
+    "source": {
+      "path": "/lib/modules/5.15.148-tegra/source",
+      "ls": "lrwxrwxrwx 1 root root 109 Sep 23 08:07 /lib/modules/5.15.148-tegra/source -> /home/adv/BSP/risc_nvidia_jetson_36.4_agx-orin+orin-nx_6_2025-09-23/kernel/kernel_out/kernel/kernel-jammy-src",
+      "resolved": "BROKEN"
+    }
+  },
+
+  "broken_symlinks_system_wide": [
+    "/usr/lib/modules/5.15.148-tegra/build;/usr/lib/modules/5.15.148-tegra/source;/usr/lib/debian-med/share/man/man1/snap.1.gz;"
+  ],
+
+  "toolchain": {
+    "gcc": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0",
+    "make": "GNU Make 4.3",
+    "ld": "GNU ld (GNU Binutils for Ubuntu) 2.38",
+    "bc": "bc 1.07.1"
+  },
+
+  "analysis": {
+    "problem": "Kernel build/source symlinks reference a host BSP path not present on the target",
+    "root_cause": "Custom BSP or host-built kernel image flashed without relinking on-device build environment",
+    "impact": "Out-of-tree kernel module builds and DKMS fail; running kernel unaffected"
+  },
+
+  "corrective_action": {
+    "intent": "Restore valid on-device kernel build environment using installed headers",
+    "commands": [
+      "sudo rm /lib/modules/5.15.148-tegra/build",
+      "sudo rm /lib/modules/5.15.148-tegra/source",
+      "sudo ln -s /usr/src/linux-headers-5.15.148-tegra-ubuntu22.04_aarch64 /lib/modules/5.15.148-tegra/build",
+      "sudo ln -s /usr/src/linux-headers-5.15.148-tegra-ubuntu22.04_aarch64 /lib/modules/5.15.148-tegra/source"
+    ],
+    "verification": [
+      "readlink -f /lib/modules/5.15.148-tegra/build",
+      "find /lib/modules/5.15.148-tegra -xtype l"
+    ],
+    "status_after_fix": "System supports standard out-of-tree kernel module compilation"
+  }
+}
