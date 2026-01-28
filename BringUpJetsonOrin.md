@@ -48,8 +48,16 @@ sudo reboot
 
 Install firefox:
 ```bash
-
-
+sudo snap remove firefox 2>/dev/null || true && \
+sudo add-apt-repository -y ppa:mozillateam/ppa && \
+sudo apt update && \
+sudo tee /etc/apt/preferences.d/firefox-no-snap >/dev/null <<'EOF'
+Package: firefox*
+Pin: release o=LP-PPA-mozillateam
+Pin-Priority: 1001
+EOF
+sudo apt install -y firefox && \
+which firefox && firefox --version
 ```
 
 ```bash
