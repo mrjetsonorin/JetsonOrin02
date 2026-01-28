@@ -1,12 +1,3 @@
-Ask for the following:
-
-Full kernel source tree matching 5.15.148-tegra
-
-Their BSP package containing kernel-jammy-src
-
-Official OOT module build instructions for this image
-
-
 
 
 The kernel build and source symlinks under /lib/modules/5.15.148-tegra/ were originally pointing to a non-existent host-side BSP path, indicating that the kernel was built off-target. I corrected these symlinks to point to the locally installed NVIDIA kernel headers so that standard tooling can resolve build and source paths without failure.
@@ -201,3 +192,78 @@ EOF
 ```
 
 
+
+Ask for the following:
+
+Full kernel source tree matching 5.15.148-tegra
+
+Their BSP package containing kernel-jammy-src
+
+Official OOT module build instructions for this image
+
+
+
+You need to build an out-of-tree module now
+
+If your task is “I need a .ko file”:
+
+Correct workflow (vendor-safe):
+
+Build the module on:
+
+Advantech’s BSP host
+
+OR a matching Jetson Docker SDK they provide
+
+Copy only the .ko to the device
+
+insmod / modprobe
+
+❌ Do not try to finish this on the target with headers only
+(it will keep failing in non-obvious ways)
+
+You want to verify compatibility (no build)
+
+If you’re just checking whether a module would load:
+
+You can safely do:
+
+modinfo your_module.ko
+uname -r
+
+
+And compare:
+
+vermagic
+
+kernel version
+
+compiler version
+
+No kernel source needed for that.
+
+
+Work host-side (if you already have BSP)
+
+Only if Advantech already gave you a BSP tarball.
+
+Workflow
+
+Unpack BSP on x86 host (or another Jetson)
+
+Build modules against their kernel tree
+
+Copy .ko files to:
+
+/lib/modules/5.15.148-tegra/extra/
+
+
+depmod -a
+
+Do NOT
+
+rebuild kernel on the device
+
+mix NVIDIA stock sources
+
+install random kernel packages
