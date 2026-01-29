@@ -37,6 +37,8 @@ Name=can1
 
 [CAN]
 BitRate=500000
+ListenOnly=no
+RestartSec=0.1
 ```
 ---
 
