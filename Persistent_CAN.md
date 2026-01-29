@@ -66,5 +66,24 @@ You should see:
 
 ```bash
 candump can0
-candump can1
 ```
+YOU WILL SEE READINGS...
+
+```bash
+candump can1 &
+cansend can1 123#DEADBEEF
+```
+
+Seeing:
+```
+can1  123   [4]  DE AD BE EF
+```
+means:
+
+* kernel driver OK
+* mttcan OK
+* transceiver powered
+* CANH/CANL loopback works
+* bitrate is accepted
+
+Silence after that is **EXPECTED** if nothing else talks, i.e. no wheel movement commands.
