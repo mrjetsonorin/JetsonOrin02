@@ -185,3 +185,48 @@ LAUNCH
 
   If you want, I can wire the healthcheck to run automatically after launch (with a short grace period) and print a concise PASS/FAIL summary.
 
+
+
+
+
+
+
+
+   1) Install missing dependency (needs sudo):
+
+  sudo apt-get update
+  sudo apt-get install -y ros-humble-backward-ros
+
+  2) Install ZED wrapper deps + build just ZED packages:
+
+  cd /home/ubuntu/dev_am/marso-stack/marso_ws
+  source /opt/ros/humble/setup.bash
+  rosdep install --from-paths src/zed-ros2-wrapper -y --ignore-src
+  colcon build --symlink-install --packages-up-to zed_wrapper --cmake-args=-DCMAKE_BUILD_TYPE=Release
+
+  (These are the same steps from Stereolabs’ ROS2 guide.) (stereolabs.com (https://www.stereolabs.com/docs/ros2?utm_source=openai))
+
+  3) Launch the ZED camera node (ZED‑X):
+
+  ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zedx
+
+  (stereolabs.com (https://www.stereolabs.com/docs/ros2?utm_source=openai))
+
+  4) Wire it into your teleop launch:
+
+  export CAMERA_LAUNCH=/home/ubuntu/dev_am/marso-stack/marso_ws/install/zed_wrapper/share/zed_wrapper/launch/zed_camera.launch.py
+  export CAMERA_MODEL=zedx
+  /home/ubuntu/dev_am/marso-stack/scripts/teleop_local.sh
+
+  Once that’s done, the “no camera publishers” warning should go away.
+
+
+
+  source /home/ubuntu/dev_am/marso-stack/marso_ws/install/setup.bash
+  ros2 launch zed_wrapper zed_camera.launch.py camera_model:=zedx
+
+  If you want it persistent:
+
+  echo "source /home/ubuntu/dev_am/marso-stack/marso_ws/install/setup.bash" >> ~/.bashrc
+
+  Then retry the launch.
