@@ -166,3 +166,22 @@ LAUNCH
   - run preflight checks
   - prompt if warnings
   - launch teleop.launch.py with defaults on
+
+
+
+  1. Rebuild so the updated env_utils.py is used by launch:
+
+  cd /home/ubuntu/dev_am/marso-stack/marso_ws
+  source /opt/ros/humble/setup.bash
+  colcon build --symlink-install --packages-select marso_bringup
+
+  2. Validate device ID now shows Marso-001:
+
+  /home/ubuntu/dev_am/marso-stack/scripts/teleop_local.sh
+
+  3. Run local healthcheck when needed:
+
+  /home/ubuntu/dev_am/marso-stack/scripts/marso_healthcheck_local.sh
+
+  If you want, I can wire the healthcheck to run automatically after launch (with a short grace period) and print a concise PASS/FAIL summary.
+
