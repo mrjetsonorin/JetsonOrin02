@@ -47,3 +47,13 @@ sudo systemctl restart marso-joy-watch.service
 ```
 
 The gate should clear.
+
+nNOT ENIOUGH
+```bash
+sudo apt install -y chrony
+sudo systemctl disable --now systemd-timesyncd
+sudo systemctl enable --now chrony
+chronyc sources -v
+chronyc tracking
+
+```
