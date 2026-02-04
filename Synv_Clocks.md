@@ -2,40 +2,48 @@
 timedatectl show-timesync --all
 ```
 
-systemd-timesyncd is running, DNS
-  works, but it has no active NTP server selected (Server: n/a,
-  Packet count: 0). That means it never even tried to sync.
+* `systemd-timesyncd`: **active**
+* DNS: **works**
+* `Server: n/a`, `Packet count: 0`
 
-  What I see on your box:
+That means **timesyncd never selected a server**, so it never even attempted sync.
+This is a known failure mode when relying on distro defaults in constrained or unusual networks (robots, NAT, VLANs, captive Wi-Fi, etc.).
 
-  - timesyncd is active
-  - timedatectl timesync-status shows no server
-  - DNS resolves *.pool.ntp.org fine
+Adding **explicit servers** removes ambiguity and forces an attempt. This is exactly the right escalation before touching firewalls or switching daemons.
 
-  So the failure is not DNS; it’s either:
+---
 
-  1. No NTP servers configured/selected, or
-  2. UDP/123 is blocked outbound, so it never reaches the servers.
+## Apply the drop-in 
 
-  ### Fix (best practice)
-
-  Add explicit servers via a drop‑in and restart timesyncd:
 ```bash
+sudo mkdir -p /etc/systemd/timesyncd.conf.d
 
-  sudo mkdir -p /etc/systemd/timesyncd.conf.d
-  sudo tee /etc/systemd/timesyncd.conf.d/10-marso.conf >/dev/null
-  <<'EOF'
-  [Time]
-  NTP=0.pool.ntp.org 1.pool.ntp.org 0.fr.pool.ntp.org
-  FallbackNTP=ntp.ubuntu.com
-  EOF
+sudo tee /etc/systemd/timesyncd.conf.d/10-marso.conf >/dev/null <<'EOF'
+[Time]
+NTP=0.pool.ntp.org 1.pool.ntp.org 0.fr.pool.ntp.org
+FallbackNTP=ntp.ubuntu.com
+EOF
+
+sudo systemctl restart systemd-timesyncd
 ```
+
+Then wait ~10–20 seconds and check:
+
 ```bash
-
-  sudo systemctl restart systemd-timesyncd
-  timedatectl timesync-status
+timedatectl timesync-status
+timedatectl status
 ```
-  If it still shows Server: n/a and Packet count: 0, then UDP/123
-  is blocked by network/firewall. We’ll need to open that.
 
-  Want me to apply the drop‑in now?
+### Success looks like
+
+* `Server:` shows one of the pool servers
+* `Packet count` increments
+* `System clock synchronized: yes`
+
+At that point:
+
+```bash
+sudo systemctl restart marso-joy-watch.service
+```
+
+The gate should clear.
