@@ -21,6 +21,46 @@ chronyc tracking
 
 ```
 
+```bash
+~$ chronyc sources -v
+
+  .-- Source mode  '^' = server, '=' = peer, '#' = local clock.
+ / .- Source state '*' = current best, '+' = combined, '-' = not combined,
+| /             'x' = may be in error, '~' = too variable, '?' = unusable.
+||                                                 .- xxxx [ yyyy ] +/- zzzz
+||      Reachability register (octal) -.           |  xxxx = adjusted offset,
+||      Log2(Polling interval) --.      |          |  yyyy = measured offset,
+||                                \     |          |  zzzz = estimated error.
+||                                 |    |           \
+MS Name/IP address         Stratum Poll Reach LastRx Last sample
+===============================================================================
+^+ prod-ntp-3.ntp1.ps5.cano>     2   6    17    19    +63us[  +72us] +/- 6443us
+^* prod-ntp-5.ntp1.ps5.cano>     2   6    17    18   +950ns[+9545ns] +/- 6440us
+^+ prod-ntp-4.ntp4.ps5.cano>     2   6    17    20   -357us[ -348us] +/- 6808us
+^- alphyn.canonical.com          2   6    17    19  +3143us[+3152us] +/-   64ms
+^+ dns.freewebworld.fr           1   6    17    20    +87us[  +95us] +/- 6309us
+^- dns-v3.ns4v.icu               2   6    17    20    +15us[  +23us] +/-   42ms
+^- gofer.v4.goneco.de            2   6    17    19   +404us[ +413us] +/-   31ms
+^+ 176-137-36-37.abo.bbox.fr     1   6    17    19   +121us[ +130us] +/- 6998us
+ubuntu@localhost:~$ sudo chronyc makestep
+200 OK
+ubuntu@localhost:~$ sleep 5
+chronyc tracking
+Reference ID    : B97DBE3A (prod-ntp-5.ntp4.ps5.canonical.com)
+Stratum         : 3
+Ref time (UTC)  : Thu Feb 12 14:04:24 2026
+System time     : 0.000000000 seconds slow of NTP time
+Last offset     : +0.000008595 seconds
+RMS offset      : 0.000008595 seconds
+Frequency       : 0.000 ppm slow
+Residual freq   : -19.558 ppm
+Skew            : 1000000.000 ppm
+Root delay      : 0.012407249 seconds
+Root dispersion : 31.344129562 seconds
+Update interval : 2.0 seconds
+Leap status     : Normal
+ubuntu@localhost:~$
+```
 # Marso Joystick Watcher — Minimal Install (New Robot)
 
 ## Assumptions
