@@ -1,13 +1,17 @@
 ```bash
- sudo mkdir -p /etc/systemd/timesyncd.conf.d
-  sudo tee /etc/systemd/timesyncd.conf.d/10-marso.conf >/dev/null <<'EOF'
-  [Time]
-  NTP=pool.ntp.org
-  FallbackNTP=ntp.ubuntu.com
-  EOF
-  sudo systemctl restart systemd-timesyncd
-  timedatectl timesync-status
-  timedatectl show -p NTPSynchronized --value
+sudo mkdir -p /etc/systemd/timesyncd.conf.d
+
+sudo tee /etc/systemd/timesyncd.conf.d/10-marso.conf >/dev/null <<EOF
+[Time]
+NTP=pool.ntp.org
+FallbackNTP=ntp.ubuntu.com
+EOF
+
+sudo systemctl restart systemd-timesyncd
+
+timedatectl timesync-status
+timedatectl show -p NTPSynchronized --value
+
 ```
 
 # Marso Joystick Watcher — Minimal Install (New Robot)
