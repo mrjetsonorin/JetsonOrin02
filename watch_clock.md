@@ -12,6 +12,13 @@ sudo systemctl restart systemd-timesyncd
 timedatectl timesync-status
 timedatectl show -p NTPSynchronized --value
 
+sudo apt remove systemd-timesyncd -y
+sudo apt install chrony -y
+sudo systemctl enable chrony
+sudo systemctl restart chrony
+sleep 5
+chronyc tracking
+
 ```
 
 # Marso Joystick Watcher — Minimal Install (New Robot)
