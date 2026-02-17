@@ -130,3 +130,38 @@ uv, npm..
 ```bash
 sudo apt install npm
 ```
+
+
+if problems with gh auth:
+asra702a1:~/azure-iot-sdk-c/build/build/build$ gh auth login
+? Where do you use GitHub? GitHub.com
+? What is your preferred protocol for Git operations on this host? HTTPS
+? Authenticate Git with your GitHub credentials? Yes
+? How would you like to authenticate GitHub CLI? Login with a web browser
+
+! First copy your one-time code: 9431-7463
+Press Enter to open https://github.com/login/device in your browser...
+[49424] Sandbox: CanCreateUserNamespace() unshare(CLONE_NEWPID): EPERM
+Error: no DISPLAY environment variable specified
+✓ Authentication complete.
+- gh config set -h github.com git_protocol https
+✓ Configured git protocol
+mkdir /home/ubuntu/.config/gh: permission denied
+ubuntu@nvthorasra702a1:~/azure-iot-sdk-c/build/build/build$ echo $HOME
+ls -ld $HOME
+/home/ubuntu
+drwxr-x--- 22 ubuntu ubuntu 4096 Feb 17 11:19 /home/ubuntu
+ubuntu@nvthorasra702a1:~/azure-iot-sdk-c/build/build/build$ ls -ld /home/ubuntu/.config
+drwxr-xr-x 3 root root 4096 Dec 17 10:32 /home/ubuntu/.config
+ubuntu@nvthorasra702a1:~/azure-iot-sdk-c/build/build/build$ ls -la /home/ubuntu/.config
+total 12
+drwxr-xr-x  3 root   root   4096 Dec 17 10:32 .
+drwxr-x--- 22 ubuntu ubuntu 4096 Feb 17 11:19 ..
+drwxr-xr-x  2 root   root   4096 Dec 17 10:32 autostart
+ubuntu@nvthorasra702a1:~/azure-iot-sdk-c/build/build/build$ sudo chown -R ubuntu:ubuntu /home/ubuntu/.config
+ubuntu@nvthorasra702a1:~/azure-iot-sdk-c/build/build/build$ ls -ld /home/ubuntu/.config
+drwxr-xr-x 3 ubuntu ubuntu 4096 Dec 17 10:32 /home/ubuntu/.config
+ubuntu@nvthorasra702a1:~/azure-iot-sdk-c/build/build/build$ gh auth status
+You are not logged into any GitHub hosts. To log in, run: gh auth login
+ubuntu@nvthorasra702a1:~/azure-iot-sdk-c/build/build/build$
+ubuntu@nvthorasra702a1:~/azure-iot-sdk-c/build/build/build$
