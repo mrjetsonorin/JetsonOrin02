@@ -126,3 +126,7 @@ gh auth status
 ```
 
 
+uv, npm..
+```bash
+sudo apt install npm
+```
