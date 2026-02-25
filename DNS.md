@@ -42,7 +42,7 @@ nameserver 127.0.0.53
 
 ---
 
-# 🔎 Confirm Real Upstream DNS
+# Confirm Real Upstream DNS
 
 Run:
 
