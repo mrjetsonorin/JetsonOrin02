@@ -3,8 +3,6 @@
 **Device:** Jetson AGX Orin (T234)
 **JetPack / L4T Version:** 36.4.0
 **Boot Device:** NVMe
-**Date:** Auto-generated from terminal session
-
 ---
 
 # 1. Physical Block Devices
